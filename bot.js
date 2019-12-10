@@ -11,6 +11,11 @@ async function main () {
 })()
 
 bot.use(async (ctx, next) => {
+  ctx.ms = new Date()
+  next()
+})
+
+bot.use(async (ctx, next) => {
   await next(ctx)
 
   const ms = new Date() - ctx.ms
