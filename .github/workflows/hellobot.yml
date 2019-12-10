@@ -2,7 +2,7 @@ name: HelloBot
 
 on:
   schedule:
-    - cron: '* * * * *'
+    - cron: '*/1 * * * *'
 
 jobs:
   build:
