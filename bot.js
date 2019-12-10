@@ -10,6 +10,14 @@ async function main () {
   await main()
 })()
 
+bot.use(async (ctx, next) => {
+  await next(ctx)
+
+  const ms = new Date() - ctx.ms
+
+  console.log('Response time %sms', ms)
+})
+
 bot.start(async (ctx, next) => {
   ctx.reply('Star from GitHub Actions!')
 })
