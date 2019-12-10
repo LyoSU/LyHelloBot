@@ -1,11 +1,16 @@
 name: HelloBot
+
 on:
   schedule:
     - cron: '*/1 * * * *'
+
 jobs:
-  update-gist:
-    runs-on: ubuntu-latest
+  build:
+
     steps:
-      uses: actions/setup-node@v1
+    - name: HelloBot
+      run: |
+        npm ci
+        npm start
       env:
         BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
