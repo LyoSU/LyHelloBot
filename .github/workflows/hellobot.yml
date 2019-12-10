@@ -3,10 +3,8 @@ name: HelloBot
 on: [push]
 
 jobs:
-  runs:
-
+  work:
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v1
     - name: HelloBot

@@ -5,10 +5,8 @@ on:
       - cron: '*/5 * * * *'
 
 jobs:
-  build:
-
+  work:
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v1
     - name: HelloBot
