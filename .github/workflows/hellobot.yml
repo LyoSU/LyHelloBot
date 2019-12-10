@@ -1,6 +1,8 @@
 name: HelloBot
 
 on: [push]
+  schedule:
+      - cron: '*/5 * * * *'
 
 jobs:
   build:
