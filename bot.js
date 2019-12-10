@@ -14,6 +14,10 @@ bot.use(async (ctx, next) => {
   ctx.reply('Hello from GitHub Actions!')
 })
 
+bot.catch((err, ctx) => {
+  console.log(`Ooops, ecountered an error for ${ctx.updateType}`, err)
+})
+
 bot.launch().then(() => {
   console.log('bot start polling')
 })
