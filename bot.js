@@ -11,7 +11,11 @@ async function main () {
 })()
 
 bot.use(async (ctx, next) => {
-  ctx.reply('Hello from GitHub Actions!')
+  ctx.reply('Message')
+})
+
+bot.start(async (ctx, next) => {
+  ctx.reply('Star from GitHub Actions!')
 })
 
 bot.catch((err, ctx) => {
