@@ -10,12 +10,12 @@ async function main () {
   await main()
 })()
 
-bot.use(async (ctx, next) => {
-  ctx.reply('Message')
-})
-
 bot.start(async (ctx, next) => {
   ctx.reply('Star from GitHub Actions!')
+})
+
+bot.use(async (ctx, next) => {
+  ctx.reply('Message')
 })
 
 bot.catch((err, ctx) => {
