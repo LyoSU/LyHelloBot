@@ -28,7 +28,7 @@ bot.start(async (ctx, next) => {
 })
 
 bot.use(async (ctx, next) => {
-  ctx.reply('Message')
+  await ctx.reply('Message')
 })
 
 bot.catch((err, ctx) => {
