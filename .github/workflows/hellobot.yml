@@ -6,6 +6,6 @@ jobs:
   update-gist:
     runs-on: ubuntu-latest
     steps:
-      - name: HelloBot
-        env:
-          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+      uses: actions/setup-node@v1
+      env:
+        BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
