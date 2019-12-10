@@ -1,0 +1,11 @@
+name: HelloBot
+on:
+  schedule:
+    - cron: '*/1 * * * *'
+jobs:
+  update-gist:
+    runs-on: ubuntu-latest
+    steps:
+      - name: HelloBot
+        env:
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
