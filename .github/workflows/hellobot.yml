@@ -3,7 +3,7 @@ name: HelloBot
 on: [push]
 
 jobs:
-  build:
+  runs:
 
     runs-on: ubuntu-latest
 
