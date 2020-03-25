@@ -10,7 +10,11 @@ const userSchema = mongoose.Schema({
   first_name: String,
   last_name: String,
   full_name: String,
-  username: String
+  username: String,
+  language_code: String,
+  settings: {
+    locale: String
+  }
 }, {
   timestamps: true
 })

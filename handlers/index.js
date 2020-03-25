@@ -1,9 +1,9 @@
-module.exports = (bot) => {
-  const handlers = [
-    'start'
-  ]
+const fs = require('fs')
 
-  handlers.forEach((handler) => {
-    bot.use(require(`./${handler}`))
+module.exports = (bot) => {
+  const handlersFile = fs.readdirSync(__dirname)
+
+  handlersFile.forEach((fileName) => {
+    if (fileName !== 'index.js') bot.use(require(`${__dirname}/${fileName}`))
   })
 }
