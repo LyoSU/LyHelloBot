@@ -9,6 +9,9 @@ const {
   db
 } = require('./database')
 const {
+  escapeHTML
+} = require('./helpers')
+const {
   stats,
   updateUserDb
 } = require('./middlewares')
@@ -25,16 +28,6 @@ bot.use(rateLimit({
 }))
 
 bot.catch(async (error, ctx) => {
-  const escapeHTML = str => str.replace(/[&<>'"]/g,
-    tag => ({
-      '&': '&amp;',
-      '<': '&lt;',
-      '>': '&gt;',
-      "'": '&#39;',
-      '"': '&quot;'
-    }[tag] || tag)
-  )
-
   if (ctx.config) {
     let errorText = `<b>error for ${ctx.updateType}:</b>\n\n<code>${escapeHTML(error.stack)}</code>`
     if (ctx.from && ctx.from.id) errorText = `<a href="tg://user?id=${ctx.from.id}">${ctx.from.id}</a>\n${errorText}`
