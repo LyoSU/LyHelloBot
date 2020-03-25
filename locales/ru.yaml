@@ -1,0 +1,24 @@
+language_name: 🇷🇺 Русский
+
+start:
+  info: |
+    Привет, <b>${user.full_name}</b> 👋
+
+    Этот шаблон бота для быстрого создания ботов.
+
+    🇺🇸 /lang — change the language
+    🇷🇺 /lang — изменить язык
+
+    <b>👨🏻‍💻 Блог разработчика:</b> @LyBlog
+    <b>GitHub:</b> github.com/LyoSU/lyhellobot
+
+undefined_message: |
+  <b>Я не понимаю тебя 😞</b>
+
+  Попробуй написать /start и начать заново.
+
+error:
+  unknown: |
+    <b>🙊 Упс...</b>
+
+    Произошла неизвестная ошибка. Администратор уже знает о ней и скоро исправит.

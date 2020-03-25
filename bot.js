@@ -1,4 +1,17 @@
+const fs = require('fs')
+const path = require('path')
 const Telegraf = require('telegraf')
+const Composer = require('telegraf/composer')
+const session = require('telegraf/session')
+const I18n = require('telegraf-i18n')
+const rateLimit = require('telegraf-ratelimit')
+const {
+  db
+} = require('./database')
+const {
+  stats,
+  updateUserDb
+} = require('./middlewares')
 
 const bot = new Telegraf(process.env.BOT_TOKEN)
 
@@ -6,43 +19,84 @@ const bot = new Telegraf(process.env.BOT_TOKEN)
   console.log(await bot.telegram.getMe())
 })()
 
-bot.use(async (ctx, next) => {
-  ctx.ms = new Date()
-  next()
+bot.use(rateLimit({
+  window: 500,
+  limit: 1
+}))
+
+bot.catch(async (error, ctx) => {
+  const escapeHTML = str => str.replace(/[&<>'"]/g,
+    tag => ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      "'": '&#39;',
+      '"': '&quot;'
+    }[tag] || tag)
+  )
+
+  if (ctx.config) {
+    let errorText = `<b>error for ${ctx.updateType}:</b>\n\n<code>${escapeHTML(error.stack)}</code>`
+    if (ctx.from && ctx.from.id) errorText = `<a href="tg://user?id=${ctx.from.id}">${ctx.from.id}</a>\n${errorText}`
+
+    await ctx.replyWithHTML(ctx.i18n.t('error.unknown')).catch(() => {})
+
+    await ctx.telegram.sendMessage(ctx.config.mainAdminId, errorText, {
+      parse_mode: 'HTML'
+    }).catch(() => {})
+  }
+
+  console.error(`error for ${ctx.updateType}`, error)
 })
 
-bot.use(async (ctx, next) => {
-  await next(ctx)
+bot.use((Composer.optional((ctx) => ctx.chat.type !== 'private', () => {}))) // only private
 
-  const ms = new Date() - ctx.ms
+bot.context.db = db
 
-  console.log('Response time %sms', ms)
+const i18n = new I18n({
+  directory: path.resolve(__dirname, 'locales'),
+  defaultLanguage: 'ru',
+  defaultLanguageOnMissing: true
 })
 
-bot.start(async (ctx, next) => {
-  ctx.reply('Start command')
-})
+bot.use(i18n)
 
-bot.use(async (ctx, next) => {
-  await ctx.reply('Any message')
-})
+bot.use(session({ ttl: 60 * 5 }))
 
-bot.catch((err, ctx) => {
-  console.log(`Ooops, ecountered an error for ${ctx.updateType}`, err)
-})
+bot.use(updateUserDb)
 
-if (process.env.BOT_DOMAIN) {
-  bot.launch({
-    webhook: {
-      domain: process.env.BOT_DOMAIN,
-      hookPath: `/HistoryBot:${process.env.BOT_TOKEN}`,
-      port: process.env.WEBHOOK_PORT || 2200
-    }
-  }).then(() => {
-    console.log('bot start webhook')
+bot.use(stats)
+
+bot.use((ctx, next) => {
+  const config = JSON.parse(fs.readFileSync('./config.json', 'utf8'))
+  ctx.config = config
+  if (ctx.callbackQuery) ctx.state.answerCbQuery = []
+  return next(ctx).then(() => {
+    if (ctx.callbackQuery) return ctx.answerCbQuery(...ctx.state.answerCbQuery)
   })
-} else {
-  bot.launch().then(() => {
-    console.log('bot start polling')
-  })
-}
+})
+
+require('./handlers')(bot)
+
+bot.use((ctx) => {
+  return ctx.replyWithHTML(ctx.i18n.t('undefined_message'))
+})
+
+db.connection.once('open', async () => {
+  console.log('Connected to MongoDB')
+  if (process.env.BOT_DOMAIN) {
+    bot.launch({
+      webhook: {
+        domain: process.env.BOT_DOMAIN,
+        hookPath: `/lyhellobot:${process.env.BOT_TOKEN}`,
+        port: process.env.WEBHOOK_PORT || 2200
+      }
+    }).then(() => {
+      console.log('bot start webhook')
+    })
+  } else {
+    bot.launch().then(() => {
+      console.log('bot start polling')
+    })
+  }
+})

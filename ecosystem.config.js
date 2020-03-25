@@ -1,6 +1,6 @@
 module.exports = {
   apps: [{
-    name: 'QuoteBot',
+    name: 'lyhellobot',
     script: './index.js',
     instances: 1,
     exec_mode: 'cluster',
@@ -11,6 +11,11 @@ module.exports = {
     },
     env_production: {
       NODE_ENV: 'production'
-    }
+    },
+    post_update: [
+      'echo App has been updated, running npm install...',
+      'npm install',
+      'echo App is being restarted now'
+    ]
   }]
 }
